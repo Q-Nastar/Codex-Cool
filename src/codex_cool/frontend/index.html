@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex Cool</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="url(#g1)"/>
+          <path d="M8 14l4 4 8-8" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+        <span class="logo-text">Codex Cool</span>
+      </div>
+      <div class="status-indicator" id="topbar-status">
+        <span class="status-dot running"></span>
+        <span class="status-text" data-i18n="statusRunning">运行中</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="toggleLang()" title="切换语言">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        <span id="lang-label">中文</span>
+      </button>
+      <button class="topbar-btn" id="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span id="theme-label">浅色</span>
+      </button>
+      <button class="topbar-btn" onclick="showAddProviderModal()" title="添加供应商">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span data-i18n="addProviderBtn">添加供应商</span>
+      </button>
+      <button class="topbar-btn" onclick="showDocsModal()" title="使用文档">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <span data-i18n="docsBtn">文档</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: var(--stat-icon-purple-bg); color: var(--stat-icon-purple-color);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-providers">0</span>
+            <span class="stat-label" data-i18n="statApiProviders">API 供应商</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: var(--stat-icon-green-bg); color: var(--stat-icon-green-color);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-uptime">00:00:00</span>
+            <span class="stat-label" data-i18n="statUptime">运行时间</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: var(--stat-icon-amber-bg); color: var(--stat-icon-amber-color);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-port">18080</span>
+            <span class="stat-label" data-i18n="statProxyPort">代理端口</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+        <div class="card inject-card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px">
+              <div class="inject-card-icon" style="background:var(--accent-bg); color:var(--accent-hover)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </div>
+              <h2 data-i18n="injectTitle">Codex App 代理注入</h2>
+            </div>
+            <span class="badge" id="inject-badge" data-i18n="detectingText">检测中...</span>
+          </div>
+          <div class="card-body">
+            <div id="inject-status-info" style="margin-bottom:12px"></div>
+            <div id="inject-form" style="margin-bottom:12px">
+              <div style="margin-bottom:12px">
+                <label class="form-label" data-i18n="selectInjectModel">选择注入模型</label>
+                <div id="codex-model-checkboxes" style="max-height:160px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; background:var(--bg-primary)"></div>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn btn-primary" id="btn-inject" onclick="doInject()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  <span data-i18n="injectProxyBtn">注入代理</span>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="testInjectProxy()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span data-i18n="testConnBtn">测试连接</span>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="loadInjectModels()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+                  <span data-i18n="loadModelsBtn">载入可用模型</span>
+                </button>
+              </div>
+            </div>
+            <div style="margin-top:8px">
+              <button class="btn btn-danger" id="btn-uninject" onclick="doUninject()" style="display:none">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                <span data-i18n="restoreDefaultConfig">恢复默认配置</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card inject-card">
+          <div class="card-header">
+            <div style="display:flex; align-items:center; gap:10px">
+              <div class="inject-card-icon" style="background:var(--format-anthropic-bg); color:var(--format-anthropic-color)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0110 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="M8 12l2 4 2-8 2 8 2-4"/></svg>
+              </div>
+              <h2 data-i18n="claudeInjectTitle">Claude App 代理注入</h2>
+            </div>
+            <span class="badge" id="claude-inject-badge" data-i18n="detectingText">检测中...</span>
+          </div>
+          <div class="card-body">
+            <div id="claude-inject-status-info" style="margin-bottom:12px"></div>
+            <div id="claude-inject-form" style="margin-bottom:12px">
+              <div style="margin-bottom:12px">
+                <label class="form-label"><span data-i18n="selectInjectModel">选择注入模型</span> <span class="text-secondary" data-i18n="selectModelMultiHint">(可多选)</span></label>
+                <div id="claude-model-checkboxes" style="max-height:160px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; background:var(--bg-primary)"></div>
+              </div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn btn-primary" id="btn-claude-inject" onclick="doClaudeInject()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  <span data-i18n="injectProxyBtn">注入代理</span>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="testInjectProxy()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span data-i18n="testConnBtn">测试连接</span>
+                </button>
+                <button class="btn btn-ghost btn-sm" onclick="loadClaudeInjectModels()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/><polyline points="21 3 21 9 15 9"/></svg>
+                  <span data-i18n="loadModelsBtn">载入可用模型</span>
+                </button>
+              </div>
+            </div>
+            <div style="margin-top:8px">
+              <button class="btn btn-danger" id="btn-claude-uninject" onclick="doClaudeUninject()" style="display:none">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                <span data-i18n="restoreDefaultConfig">恢复默认配置</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <div style="display:flex; align-items:center; gap:10px">
+            <div class="inject-card-icon" style="background:var(--success-bg); color:var(--success)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <h2 data-i18n="quickAccess">快速接入</h2>
+            <code id="proxy-url" style="font-family:'SF Mono','Fira Code','Cascadia Code',monospace; font-size:13px; color:var(--accent-hover); margin-left:4px">http://127.0.0.1:18080/v1</code>
+          </div>
+          <button class="btn-icon" onclick="copyText('proxy-url')" title="复制">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <div style="display:flex; align-items:center; gap:10px">
+            <div class="inject-card-icon" style="background:var(--format-chat-bg); color:var(--format-chat-color)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h2 data-i18n="apiProvidersTitle">API 供应商</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showAddProviderModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span data-i18n="addBtn">添加</span>
+          </button>
+        </div>
+        <div class="card-body" id="dashboard-providers" style="padding:8px 12px">
+          <p class="text-secondary" style="padding:8px 0" data-i18n="noProviderHint">暂无供应商，请先添加</p>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <div style="display:flex; align-items:center; gap:10px">
+            <div class="inject-card-icon" style="background:var(--warning-bg); color:var(--warning)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </div>
+            <h2 data-i18n="settingsTitle">设置</h2>
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex; gap:12px; flex-wrap:wrap">
+            <div style="flex:1; min-width:140px">
+              <label class="form-label" data-i18n="listenAddrLabel">监听地址</label>
+              <input type="text" class="form-input" id="setting-host" value="127.0.0.1">
+            </div>
+            <div style="flex:1; min-width:100px">
+              <label class="form-label" data-i18n="portLabel">端口</label>
+              <input type="number" class="form-input" id="setting-port" value="18080">
+            </div>
+            <div style="flex:1; min-width:120px">
+              <label class="form-label" data-i18n="logLevelLabel">日志级别</label>
+              <select class="form-select" id="setting-log-level">
+                <option value="DEBUG">DEBUG</option>
+                <option value="INFO" selected>INFO</option>
+                <option value="WARNING">WARNING</option>
+                <option value="ERROR">ERROR</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:140px">
+              <label class="form-label" data-i18n="defaultProviderLabel">默认供应商</label>
+              <select class="form-select" id="setting-default-provider"></select>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <button class="btn btn-primary" onclick="saveSettings()" data-i18n="saveSettingsBtn">保存设置</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modal-add-provider" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title" data-i18n="modalAddProviderTitle">添加供应商</h2>
+      <button class="btn-icon" onclick="closeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="quick-tags" id="quick-tags">
+        <span class="quick-tag" onclick="fillTemplate('deepseek', this)" style="--tag-color:#4f46e5">DeepSeek</span>
+        <span class="quick-tag" onclick="fillTemplate('openai', this)" style="--tag-color:#10a37f">OpenAI</span>
+        <span class="quick-tag" onclick="fillTemplate('anthropic', this)" style="--tag-color:#d4a574">Anthropic</span>
+        <span class="quick-tag" onclick="fillTemplate('gemini', this)" style="--tag-color:#4285f4">Gemini</span>
+        <span class="quick-tag" onclick="fillTemplate('kimi', this)" style="--tag-color:#6c5ce7">Kimi</span>
+        <span class="quick-tag" onclick="fillTemplate('zhipu', this)" style="--tag-color:#3742fa">智谱</span>
+        <span class="quick-tag" onclick="fillTemplate('qwen', this)" style="--tag-color:#ff6348">千问</span>
+        <span class="quick-tag" onclick="fillTemplate('doubao', this)" style="--tag-color:#00b894">豆包</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="nameLabel">名称</label>
+        <input type="text" class="form-input" id="provider-name" placeholder="my-provider">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Base URL</label>
+        <input type="text" class="form-input" id="provider-base-url" placeholder="https://api.example.com/v1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">API Key</label>
+        <div class="input-with-hint">
+          <input type="password" class="form-input" id="provider-api-key" placeholder="sk-... 或 env:API_KEY_VAR">
+          <span class="input-hint" data-i18n="envHint">支持 env:VAR_NAME 引用环境变量</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="apiFormatLabel">API 格式</label>
+        <select class="form-select" id="provider-api-format">
+          <option value="chat">Chat Completions</option>
+          <option value="responses">Responses</option>
+          <option value="anthropic">Anthropic Messages</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label"><span data-i18n="modelListLabel">模型列表</span> <span class="text-secondary" data-i18n="modelListHint">(点击自动获取，或手动输入)</span></label>
+        <div style="display:flex; gap:8px; margin-bottom:8px">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-fetch-models" onclick="fetchModels()" data-i18n="autoFetchModelsBtn">自动获取模型</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-select-all-models" onclick="toggleAllModels()" style="display:none" data-i18n="selectAllBtn">全选/取消</button>
+        </div>
+        <div id="model-list-container" style="display:none; max-height:200px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; margin-bottom:8px; background:var(--bg-primary)">
+          <div id="model-checkboxes"></div>
+        </div>
+        <textarea class="form-textarea" id="provider-models" rows="2" data-i18n-placeholder="manualInputPlaceholder" placeholder="手动输入模型，每行一个"></textarea>
+      </div>
+      <div class="form-group" style="display:flex; align-items:center; gap:8px">
+        <input type="checkbox" id="provider-enabled" checked>
+        <label for="provider-enabled" data-i18n="enableLabel">启用</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()" data-i18n="cancelBtn">取消</button>
+      <button class="btn btn-primary" onclick="saveProvider()" data-i18n="saveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="modal-docs" onclick="closeModalOnOverlay(event)">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h2 data-i18n="docsTitle">使用文档</h2>
+      <button class="btn-icon" onclick="closeModal()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="collapse-panel open">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsCodexApp">Codex App</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsCodexAppDesc1">在仪表盘点击「注入代理」按钮，自动写入 ~/.codex/config.toml</p>
+          <p style="margin-bottom:8px" data-i18n="docsCodexAppDesc2">启动 Codex App，在模型选择器中选择 Codex-Cool 提供的模型即可。如需切回原始配置，点击「恢复配置」。</p>
+          <p style="margin-bottom:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsCodexAppDesc3">支持的 API 格式：Responses（推荐）、Chat Completions</p>
+          <p style="margin-bottom:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsCodexAppDesc4">检查点功能：通过 previous_response_id 实现链式对话上下文传递</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsCodexCli">Codex CLI</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsCodexCliDesc1">编辑 <code>~/.codex/config.toml</code>：</p>
+          <div class="code-block"><div class="code-content"><code>model = "deepseek-chat"
+model_provider = "codex-cool"
+
+[model_providers."codex-cool"]
+name = "Codex-Cool"
+base_url = "http://127.0.0.1:18080/v1"
+wire_api = "responses"</code></div></div>
+          <p style="margin-top:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsCodexCliDesc2">配置完成后直接在终端使用 codex 命令即可</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsClaudeApp">Claude App</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsClaudeAppDesc1">在仪表盘点击「注入代理」按钮，自动配置 Claude App 第三方推理网关</p>
+          <p style="margin-bottom:8px" data-i18n="docsClaudeAppDesc2">注入后重启 Claude App 即可使用第三方 API，无需登录。如需切回官方登录，点击「恢复配置」。</p>
+          <p style="margin-bottom:8px; color:var(--accent-hover); font-size:12px" data-i18n="docsClaudeAppDesc3">⚠️ 注入前请确保 Claude Desktop 已关闭，否则可能写入失败</p>
+          <p style="margin-bottom:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsClaudeAppDesc4">注入自动完成：切换 3P 模式 → 开启 Developer Mode → 设置 NODE_ENV=production（macOS）</p>
+          <p style="color:var(--text-secondary); font-size:12px" data-i18n="docsClaudeAppDesc5">支持多模型注入：可选择多个模型映射到 Claude 的 Opus/Sonnet/Haiku 等级</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsClaudeCode">Claude Code</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsClaudeCodeDesc1">设置环境变量后启动：</p>
+          <div class="code-block"><div class="code-content"><code>export ANTHROPIC_BASE_URL=http://127.0.0.1:18080
+claude</code></div></div>
+          <p style="margin-top:8px" data-i18n="docsClaudeCodeDesc2">或在 <code>~/.claude/settings.json</code> 中添加：</p>
+          <div class="code-block"><div class="code-content"><code>{"apiBaseUrl": "http://127.0.0.1:18080"}</code></div></div>
+          <p style="margin-top:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsClaudeCodeDesc3">Claude Code 使用 Anthropic Messages 协议，自动转换为上游 Provider 格式</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsEnvVar">环境变量</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsEnvVarDesc1">写入 shell 配置（如 <code>~/.zshrc</code> 或 <code>~/.bashrc</code>）：</p>
+          <div class="code-block"><div class="code-content"><code>export CODEX_COOL_API_KEY="your-api-key"</code></div></div>
+          <p style="margin-top:8px" data-i18n="docsEnvVarDesc2">之后从 Dock 启动 Codex App 也能读到 Key</p>
+          <p style="margin-top:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsEnvVarDesc3">也可在供应商配置中使用 env:VAR_NAME 引用环境变量，避免明文写入配置文件</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsApiProxy">API 代理</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsApiProxyDesc1">任何兼容 OpenAI / Anthropic 的第三方客户端均可连接：</p>
+          <div class="code-block"><div class="code-content"><code>Base URL: http://127.0.0.1:18080/v1
+API Key: （任意值或留空）</code></div></div>
+          <p style="margin-top:8px; color:var(--text-secondary); font-size:12px" data-i18n="docsApiProxyDesc2">支持协议：OpenAI Responses、OpenAI Chat Completions、Anthropic Messages</p>
+          <p style="color:var(--text-secondary); font-size:12px" data-i18n="docsApiProxyDesc3">协议自动转换：无论客户端发什么格式，都会自动转换成上游 Provider 需要的格式</p>
+        </div>
+      </div>
+      <div class="collapse-panel">
+        <div class="collapse-header" onclick="toggleCollapse(this)">
+          <span data-i18n="docsMultimodal">多模态处理</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="collapse-body">
+          <p style="margin-bottom:8px" data-i18n="docsMultimodalDesc1">以下 Provider 不支持图片/文件输入，发送时自动转换为占位符：</p>
+          <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px">
+            <span class="format-tag format-chat" style="font-size:11px">DeepSeek</span>
+            <span class="format-tag format-chat" style="font-size:11px">Kimi</span>
+            <span class="format-tag format-chat" style="font-size:11px">智谱</span>
+            <span class="format-tag format-chat" style="font-size:11px">千问</span>
+            <span class="format-tag format-chat" style="font-size:11px">豆包</span>
+          </div>
+          <p style="color:var(--text-secondary); font-size:12px" data-i18n="docsMultimodalDesc2">首次选择此类模型时会弹出提醒，后续不再重复提示。图片会被替换为 [image] 占位符文本。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

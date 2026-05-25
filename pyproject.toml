@@ -1,0 +1,28 @@
+[project]
+name = "codex-cool"
+version = "0.1.0"
+description = "A forwarding proxy service for Claude Code and Codex CLI with protocol conversion"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "httpx>=0.28.0",
+    "pydantic>=2.10.0",
+    "pyyaml>=6.0",
+    "click>=8.1.0",
+    "rich>=13.9.0",
+    "pywebview>=5.0.0",
+]
+
+[project.scripts]
+codex-cool = "codex_cool.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/codex_cool"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"src/codex_cool/frontend" = "codex_cool/frontend"

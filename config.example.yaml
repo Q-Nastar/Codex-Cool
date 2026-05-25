@@ -1,0 +1,25 @@
+host: "127.0.0.1"
+port: 8766
+default_provider: "openai"
+log_level: "INFO"
+cors_origins:
+  - "*"
+
+providers:
+  - name: "openai"
+    base_url: "https://api.openai.com/v1"
+    api_key: "env:OPENAI_API_KEY"
+    api_format: "chat"
+    priority: 10
+    enabled: true
+    timeout: 120.0
+
+  - name: "anthropic"
+    base_url: "https://api.anthropic.com/v1"
+    api_key: "env:ANTHROPIC_API_KEY"
+    api_format: "anthropic"
+    priority: 8
+    enabled: true
+    timeout: 120.0
+
+routes: []
