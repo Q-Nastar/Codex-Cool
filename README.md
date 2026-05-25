@@ -1,11 +1,12 @@
 # 酷法典
 
 
-**AI API 代理转发服务** — 这是一个非常简单的应用，就是将deepseek v4等API接入 Codex App 和 Claude App 。 没有嵌入任何广告和推荐，轻量简单。
+**API 代理转发服务** — 这是一个非常简单的应用，就是将deepseek v4等API接入 Codex App 和 Claude App 。 没有嵌入任何广告和推荐，轻量简单。
 同类产品有些只做了codex中转，有些只做了codex中转，有些不支持deepseek接入，然后我就用claude CLI做了这个小玩意，纯本地中转很方便。
 多模态、部分功能无法使用是codex和Claude的限制，和中转无关。
 
 有macos桌面端和win桌面端（还在测试），也可以用下面的命令在终端运行。
+<img width="1594" height="1656" alt="macos" src="https://github.com/user-attachments/assets/5ed557ed-275b-40b7-b27d-3753758a6cbc" />
 
 ## 🚀 快速开始
 
