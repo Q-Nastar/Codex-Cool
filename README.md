@@ -6,7 +6,8 @@
 多模态、部分功能无法使用是codex和Claude的限制，和中转无关。
 
 有macos桌面端和win桌面端（还在测试），也可以用下面的命令在终端运行。
-<img width="1594" height="1656" alt="macos" src="https://github.com/user-attachments/assets/5ed557ed-275b-40b7-b27d-3753758a6cbc" />
+
+<img width="594" height="656" alt="macos" src="https://github.com/user-attachments/assets/5ed557ed-275b-40b7-b27d-3753758a6cbc" />
 
 ## 🚀 快速开始
 
