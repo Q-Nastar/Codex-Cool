@@ -7,7 +7,7 @@
 
 有macos桌面端和win桌面端（还在测试），也可以用下面的命令在终端运行。
 
-<img width="300" height="312" alt="macos" src="https://github.com/user-attachments/assets/5ed557ed-275b-40b7-b27d-3753758a6cbc" />
+<img width="400" height="416" alt="macos" src="https://github.com/user-attachments/assets/5ed557ed-275b-40b7-b27d-3753758a6cbc" />
 
 ## 🚀 快速开始
 
